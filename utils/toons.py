@@ -5,6 +5,12 @@ def to_toon(report: TriageReport) -> str:
     Converts a TriageReport into TOONs (Token-Oriented Object Notation) format.
     TOONs emphasizes indentation and minimal syntax for LLM readability.
     """
+    # Placeholder for Rust optimization in future
+    # try:
+    #     import medical_agent_core
+    #     return medical_agent_core.fast_toon_format(report.json())
+    # except ImportError:
+    #     pass
     
     toon_str = f"""
 TriageReport
