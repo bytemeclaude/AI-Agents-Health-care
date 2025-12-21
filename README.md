@@ -1,23 +1,52 @@
-# Medical Triage Agent (v2.0)
+# Medical Triage System (Enterprise v2.0)
 
-An intelligent AI Agent built from scratch to assist healthcare professionals in patient triage.
+A high-performance, secure, and AI-powered Patient Triage System designed for healthcare providers.
 
-## 🧠 Intelligence Architecture
-- **Neural Brain**: A PyTorch-based neural network (`agent/brain.py`) that predicts risk scores from patient vitals.
-- **RAG Knowledge Base**: A robust retrieval system (`agent/rag.py`) that queries medical protocols.
-- **Agentic Core**: A central logic unit (`agent/bot.py`) that synthesizes tools, knowledge, and probabilistic risk to enable decision-making.
+## 🌟 Key Features
+- **Intelligent Triage Engine**: Combines Neural Networks (PyTorch), RAG (Retrieval-Augmented Generation), and Heuristic Tools.
+- **Enterprise Architecture**: REST API built with FastAPI, SQLite/Postgres support via SQLAlchemy.
+- **Security & Compliance**: API Key Authentication, PII Masking in Logs, Audit Trails.
+- **Scalability**: Docker-ready, asynchronous processing.
 
-## 🚀 Usage
-1. Install dependencies:
+## 🚀 Getting Started
+
+### Prerequisites
+- Python 3.10+
+- `pip`
+
+### Installation
+1. Clone the repository
+2. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-2. Run the agent:
-   ```bash
-   python main.py
-   ```
 
-## 🛠️ Tech Stack
-- **Languages**: Python
-- **ML/AI**: PyTorch, SentenceTransformers
-- **Data**: Pydantic, TOONs (Token-Oriented Object Notation)
+### Running the API
+Start the server:
+```bash
+python -m app.main
+```
+The API will be available at `http://localhost:8000`.
+
+### API Documentation
+Interactive Swagger UI is available at `http://localhost:8000/docs`.
+
+## 🧪 Testing
+Run the test suite:
+```bash
+pytest
+```
+
+## 🏗️ Architecture
+- **API Layer**: `app/main.py` (FastAPI) - Entry point, Validation, Auth.
+- **Data Layer**: `models/db_models.py` (SQLAlchemy) - Patient & Triage Records.
+- **Logic Layer**:
+  - `agent/bot.py`: Main Agent Orchestrator.
+  - `agent/brain.py`: Neural Network for Vitals Risk Assessment.
+  - `agent/rag.py`: Knowledge Base Retrieval.
+  - `tools/medical_tools.py`: Drug Interactions & Protocol Search.
+
+## 🔒 Security
+- **Authentication**: Requires `X-API-Key` header.
+- **Logging**: PII is scrubbed from application logs.
+- **Data Persistence**: All triage events are audited in the database.
