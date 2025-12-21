@@ -1,4 +1,7 @@
 import time
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 class MedicalTools:
     
@@ -8,7 +11,7 @@ class MedicalTools:
         Simulates checking for drug interactions.
         Returns a list of warnings.
         """
-        print(f"   [TOOL] Checking interactions for: {medications}")
+        logger.info(f"Checking interactions for {len(medications)} medications")
         time.sleep(1) # Simulate API latency
         
         interactions = []
@@ -26,7 +29,7 @@ class MedicalTools:
         """
         Simulates searching medical databases for triage protocols.
         """
-        print(f"   [TOOL] Searching guidelines for: {symptom}")
+        logger.info(f"Searching guidelines for symptom")
         time.sleep(1) # Simulate Search
         
         symptom = symptom.lower()

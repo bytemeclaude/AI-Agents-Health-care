@@ -2,7 +2,11 @@ from models.schemas import PatientProfile, TriageReport, UrgencyLevel
 from tools.medical_tools import MedicalTools
 from agent.brain import RiskClassifier
 from agent.rag import RAGChain
+from utils.logger import get_logger
 import time
+import hashlib
+
+logger = get_logger(__name__)
 
 class TriageAgent:
     def __init__(self):
@@ -17,7 +21,7 @@ class TriageAgent:
         """
         Synthesizes RAG context + Brain Risk Score + Tool Outputs.
         """
-        print("   [AGENT] Synthesizing Data...")
+        logger.info("Synthesizing Data...")
         time.sleep(1)
         
         reasons = []
@@ -54,18 +58,20 @@ class TriageAgent:
         )
 
     def analyze(self, patient: PatientProfile) -> TriageReport:
-        print(f"\n--- 🏥 Agent v2.0 Activated for Patient: {patient.patient_id} ---")
+        # Avoid logging PII like patient_id in production logs unless masked
+        pid_hash = hashlib.sha256(patient.patient_id.encode()).hexdigest()[:8]
+        logger.info(f"Agent v2.0 Activated for Patient ID hash: {pid_hash}")
         
         # Step 1: Tool Use
         interactions = self.tools.check_drug_interactions(patient.current_medications)
         
         # Step 2: RAG Retrieval
         main_symptom = patient.symptoms[0] if patient.symptoms else "general"
-        print(f"   [AGENT] Querying RAG for: '{main_symptom}'")
+        logger.info(f"Querying RAG for symptom category")
         rag_docs = self.rag.retrieve(main_symptom)
         
         # Step 3: Neural Probabilistic Modeling (Brain)
-        print(f"   [AGENT] Running Risk Model on Vitals...")
+        logger.info(f"Running Risk Model on Vitals...")
         v = patient.vitals
         risk_score = 0.0
         if v:

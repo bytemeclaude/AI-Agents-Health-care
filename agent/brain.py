@@ -15,8 +15,20 @@ class RiskClassifier(nn.Module):
         # High HR (idx 1) and Low O2 (idx 3) should increase risk
         with torch.no_grad():
             self.layer1.weight.data.fill_(0.01)
-            self.layer1.weight.data[0][1] = 0.5  # Weight for HR
-            self.layer1.weight.data[0][3] = -0.5 # Weight for O2 (lower is bad)
+            # Ensure the first neuron in layer 1 pays attention to HR and O2
+            self.layer1.weight.data[0][1] = 2.0  # Positive weight for HR (Higher HR -> Higher activation)
+            self.layer1.weight.data[0][3] = -2.0 # Negative weight for O2 (Lower O2 -> Higher activation if we consider 1-O2, but here input is O2)
+                                                # Wait, O2 input is 0.98. If weight is negative, high O2 -> lower activation.
+                                                # Low O2 -> less negative -> higher activation relative to high O2. Correct.
+
+            # Ensure the signal propagates through layer 2
+            self.layer2.weight.data.fill_(0.1)
+            self.layer2.weight.data[0][0] = 1.0 # Pass the first neuron of layer 1 through
+
+            # Ensure the output layer picks it up
+            self.output.weight.data.fill_(0.1)
+            self.output.weight.data[0][0] = 1.0
+
             # Bias tweaks
             self.output.bias.data.fill_(-2.0) # Baseline low risk
 

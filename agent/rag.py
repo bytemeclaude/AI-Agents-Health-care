@@ -1,6 +1,10 @@
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
+
 class RAGChain:
     def __init__(self):
-        print("   [RAG] Initializing Robust Keyword Knowledge Base...")
+        logger.info("Initializing Robust Keyword Knowledge Base...")
         self.documents = [
             "Chest Pain Protocol: Immediate ECG. Consider ACS if radiation to arm. RED Priority.",
             "Fever Protocol: If > 40C or immunocompromised, RED. If > 38C and stable, GREEN.",
@@ -8,7 +12,7 @@ class RAGChain:
             "Drug Interaction: Warfarin + Aspirin significantly increases bleeding risk. Monitor PT/INR.",
             "Shortness of Breath: If O2 < 92% or stridor, RED. If asthma history and mild wheeze, YELLOW."
         ]
-        print(f"   [RAG] Knowledge Base Indexed ({len(self.documents)} documents).")
+        logger.info(f"Knowledge Base Indexed ({len(self.documents)} documents).")
 
     def retrieve(self, query: str, n_results: int = 1) -> list[str]:
         """
