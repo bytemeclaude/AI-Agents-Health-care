@@ -1,0 +1,5 @@
+pydantic
+rich
+torch
+chromadb
+sentence-transformers
