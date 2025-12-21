@@ -16,24 +16,32 @@ class RAGChain:
 
     def retrieve(self, query: str, n_results: int = 1) -> list[str]:
         """
-        Retrieves documents based on keyword overlap. 
-        Simple, robust, and effective for "from scratch" demos.
+        Retrieves documents. 
+        Tries to use RUST HYPER-SPEED core. Falls back to Python.
         """
-        query_words = set(query.lower().split())
-        scored_docs = []
-        
-        for doc in self.documents:
-            doc_words = set(doc.lower().split())
-            # Calculate Jaccard similarity (intersection over union)
-            intersection = query_words.intersection(doc_words)
-            if not intersection:
-                score = 0
-            else:
-                score = len(intersection) / len(query_words.union(doc_words))
-            scored_docs.append((score, doc))
+        try:
+            import medical_agent_core
+            # RUST PATH
+            print("   [RAG] 🚀 Using Hyper-Speed (Rust) Search")
+            scored_docs = medical_agent_core.fast_jaccard_search(query, self.documents)
+            results = [doc for score, doc in scored_docs[:n_results] if score > 0]
             
-        # Sort by score descending
-        scored_docs.sort(key=lambda x: x[0], reverse=True)
-        
-        # Return top N documents
-        return [doc for score, doc in scored_docs[:n_results] if score > 0] or [self.documents[0]]
+        except ImportError:
+            # PYTHON FALLBACK
+            print("   [RAG] 🐢 Using Standard (Python) Search")
+            query_words = set(query.lower().split())
+            scored_docs = []
+            
+            for doc in self.documents:
+                doc_words = set(doc.lower().split())
+                intersection = query_words.intersection(doc_words)
+                if not intersection:
+                    score = 0
+                else:
+                    score = len(intersection) / len(query_words.union(doc_words))
+                scored_docs.append((score, doc))
+            
+            scored_docs.sort(key=lambda x: x[0], reverse=True)
+            results = [doc for score, doc in scored_docs[:n_results] if score > 0]
+            
+        return results or [self.documents[0]]
