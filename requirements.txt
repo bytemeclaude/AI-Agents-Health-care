@@ -3,3 +3,8 @@ rich
 torch
 chromadb
 sentence-transformers
+fastapi
+uvicorn
+sqlalchemy
+requests
+httpx
