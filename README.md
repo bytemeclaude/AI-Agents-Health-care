@@ -1,36 +1,46 @@
-# 🏥 Medical Triage Agent (Enterprise v3.0)
+# 🏥 SwasthyaSahayak (Medical Triage Agent v2.0)
 
-> **A High-Performance, AI-Powered Patient Triage System.**  
-> *Built from scratch with PyTorch, RAG, and **Rust Hyper-Speed Core**.*
+> **A Hyper-Local, AI-Powered Medical Triage System for India.**  
+> *Built with Python, Rust, and Generative AI.*
 
----
-
-## ⚡ v3.0 Hyper-Speed Mode (Rust Architecture)
-
-This project features a **Hybrid Python-Rust Architecture**. While the high-level orchestration, API, and Neural Networks remain in Python (for ease of use), the compute-intensive **Knowledge Retrieval** layer has been rewritten in **Rust**.
-
-### Why Rust?
-1.  **🚀 Performance**: The Jaccard Similarity Search runs **100x faster** than the Python equivalent by avoiding the Global Interpreter Lock (GIL) for heavy loops.
-2.  **🛡️ Memory Safety**: Rust guarantees memory safety without a garbage collector, ensuring the agent remains stable under high load.
-3.  **🔌 Seamless Integration**: We use **PyO3** and **Maturin** to compile Rust code directly into a native Python module (`medical_agent_core`).
-
-### How it Works
-The Agent's `RAGChain` (`agent/rag.py`) uses a **Feature Flag** pattern:
-- **Auto-Detect**: It checks if the Rust extension is compiled.
-- **Hyper-Speed**: If found, it dispatches search queries to the compiled binary.
-- **Graceful Fallback**: If not found, it silently reverts to the legacy Python implementation.
+[![Rust](https://img.shields.io/badge/Rust-Generated-orange)](https://www.rust-lang.org/)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://www.python.org/)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-Integration-25D366)](https://www.whatsapp.com/)
+[![Status](https://img.shields.io/badge/Status-MVP%20Ready-green)]()
 
 ---
 
-## 🌟 Key Features
+## 🌟 Overview
+**SwasthyaSahayak** aims to democratize primary healthcare triage in India. By bridging the gap between advanced medical AI and accessible communication channels (WhatsApp, Voice), it provides instant, localized medical guidance to users in their native language.
 
-| Feature | Technology | Description |
-| :--- | :--- | :--- |
-| **Risk Scoring** | **PyTorch** | Neural Network predicts urgency (0-100%) from [HR, O2, BP, Age]. |
-| **Protocol Search** | **Rust Core** | **Native Binary Search** for medical guidelines. |
-| **Data Format** | **TOONs** | Uses *Token-Oriented Object Notation* for efficient AI communication. |
-| **API Server** | **FastAPI** | Enterprise-grade REST API with Authentication & Swagger UI. |
-| **Persistence** | **SQLAlchemy** | Stores patient records and triage logs in SQLite/Postgres. |
+This project is a **v2.0 evolution** of the original Enterprise Triage Agent, optimized for:
+1.  **🇮🇳 Hyper-Localization:** Understands Hinglish (*"Tez bukhar"*) and Indian drug brands (*Crocin, Dolo*).
+2.  **🚀 Performance:** Uses a **Rust-based** search core for millisecond-latency protocol retrieval.
+3.  **📱 Accessibility:** Fully functional via **WhatsApp** and **Voice Notes**.
+
+---
+
+## ✨ Key Features
+
+### 1. 🗣️ Hinglish & Multilingual NLP
+Breaking the language barrier. The agent natively understands:
+-   **Hinglish:** *"Sir dard aur chakkar aa raha hai"* → *Headache and Dizziness*
+-   **Regional Context:** Maps colloquial terms to standardized SNOMED-CT codes (internal logic).
+-   **Tech:** Custom `LanguageHandler` with offline-first mapping + fallback translation.
+
+### 2. ⚡ Rust Hyper-Speed Core
+For areas with low connectivity, efficiency is key.
+-   **Hybrid Architecture:** Python handles high-level reasoning; **Rust** handles the heavy lifting (Jaccard similarity search over medical protocols).
+-   **Result:** 100x faster knowledge retrieval compared to pure Python implementations.
+
+### 3. 📱 WhatsApp & Voice First
+-   **No App Required:** Users chat with the bot just like they chat with a contact.
+-   **Voice Support:** Users can send audio notes describing symptoms. The bot transcribes (Whisper), analyzes, and replies in text.
+-   **State Machine:** Robust conversation flow (`Symptom` → `Age` → `Gender` → `Vitals` → `Triage`).
+
+### 4. 💊 Indian Medical Context
+-   **Drug Interactions:** database updated with top 50+ Indian brand name drugs.
+-   **Tropical Protocol:** Enhanced detection for Dengue, Malaria, and Tuberculosis symptoms.
 
 ---
 
@@ -38,27 +48,24 @@ The Agent's `RAGChain` (`agent/rag.py`) uses a **Feature Flag** pattern:
 
 ```mermaid
 graph TD
-    User[User / Doctor] -->|Input| API[FastAPI Server]
-    API --> Agent[Triage Agent Core]
+    User((User)) -->|WhatsApp/Voice| Twilio[Twilio Gateway]
+    Twilio -->|Webhook| API[FastAPI Server]
     
-    subgraph "Hybrid Intelligence Core"
-        Agent -->|Checks| Tools[Medical Tools]
-        Agent -->|Vitals| Brain[PyTorch Neural Net]
+    subgraph "SwasthyaSahayak Core"
+        API --> Lang[Language Engine]
+        Lang -->|Normalized Text| Bot[Triage Orchestrator]
         
-        subgraph "RAG System"
-            Agent -->|Query| RAG_Py[Python Orchestrator]
-            RAG_Py -->|Dispatch| Core{Is Rust Built?}
-            Core -->|Yes| Rust[🚀 Rust Binary Module]
-            Core -->|No| Python[🐢 Python Fallback]
-        end
+        Bot -->|Search| RAG{Rust RAG Core}
+        Bot -->|Vitals| Brain[PyTorch Risk Model]
+        Bot -->|Meds| Tools[Interaction Checker]
+        
+        RAG -->|Protocols| Bot
+        Brain -->|Risk Score| Bot
+        Tools -->|Alerts| Bot
     end
     
-    subgraph "Data & Persistence"
-        Agent -->|Log| DB[(SQLite Database)]
-    end
-    
-    Agent -->|TOONs Report| API
-    API -->|JSON Response| User
+    Bot -->|Triage Report| API
+    API -->|WhatsApp Msg| User
 ```
 
 ---
@@ -66,48 +73,50 @@ graph TD
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Python 3.10+
-- Rust (optional, for Hyper-Speed mode)
+-   Python 3.10+
+-   Rust (cargo)
+-   Twilio Account (for WhatsApp)
 
 ### 1. Installation
-Clone the repository and install the dependencies:
+Clone the repository and install dependencies:
 ```bash
-git clone https://github.com/Lingikaushikreddy/AI-Agents-Health-care.git
+git clone https://github.com/bytemeclaude/AI-Agents-Health-care.git
 cd AI-Agents-Health-care
 pip install -r requirements.txt
 ```
 
-### 2. Activate Hyper-Speed (Optional)
-To build the Rust core:
+### 2. Build Rust Core
+Compile the high-performance search module:
 ```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-pip install maturin
 maturin develop
 ```
-*The agent will automatically switch to `🚀 Using Hyper-Speed (Rust) Search`.*
 
-### 3. Usage
-**CLI Mode:**
+### 3. Run the UI (Streamlit)
+For quick testing without WhatsApp:
 ```bash
-python main.py
+streamlit run ui/streamlit_app.py
 ```
 
-**API Mode:**
+### 4. Run WhatsApp Server
 ```bash
-python -m app.main
+uvicorn app.whatsapp_webhook:app --reload --port 8001
 ```
-- **Live API**: `http://localhost:8000`
-- **Interactive Docs**: `http://localhost:8000/docs`
 
 ---
 
 ## 🧪 Testing
+We have added simplified test cases for the Indian context:
 ```bash
-pytest checks                   # Run unit tests
-python main.py                  # Run end-to-end verification
+pytest tests/test_api.py
 ```
 
-## 🔒 Security
-- **Authentication**: All API requests require an `X-API-Key` header.
-- **Audit Trails**: Every interaction is logged to the database for compliance.
-- **PII Redaction**: Logs are sanitized to remove names/IDs.
+---
+
+## 📜 License
+This project is open-source under the MIT License.
+
+---
+
+<p align="center">
+  <i>Built with ❤️ for India | 2026</i>
+</p>
