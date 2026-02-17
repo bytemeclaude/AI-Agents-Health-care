@@ -8,3 +8,10 @@ uvicorn
 sqlalchemy
 requests
 httpx
+# Phase 1 — Multilingual support
+langdetect
+deep-translator
+streamlit
+# Phase 2 — WhatsApp + Voice
+twilio
+openai-whisper
